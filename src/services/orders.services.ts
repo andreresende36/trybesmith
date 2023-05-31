@@ -9,6 +9,7 @@ const getAll = async ():Promise<Order[]> => {
     include: [{ model: ProductModel, attributes: ['id'], as: 'productIds' }],
     attributes: ['id', 'userId'],
   });
+  
   const formattedOrders = orders.map(
     ({ dataValues: { id, userId, productIds } }) => ({
       id,
