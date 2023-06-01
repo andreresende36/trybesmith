@@ -1,15 +1,29 @@
 import express from 'express';
-import productsRoutes from './routes/products.routes';
-import ordersRoutes from './routes/orders.routes';
-import loginRoutes from './routes/login.routes';
-import usersRoutes from './routes/user.routes';
+import loginControllers from './controllers/login.controllers';
+import loginValidation from './middlewares/loginValidation';
+import validateToken from './middlewares/validateToken';
+import userIdValidation from './middlewares/userIdValidation';
+import productIdsValidation from './middlewares/productIdsValidation';
+import ordersControllers from './controllers/orders.controllers';
+import productsController from './controllers/products.controllers';
+import nameValidation from './middlewares/nameValidation';
+import priceValidation from './middlewares/priceValidation';
+import usersController from './controllers/user.controllers';
 
 const app = express();
 
 app.use(express.json());
-app.use('/products', productsRoutes);
-app.use('/orders', ordersRoutes);
-app.use('/login', loginRoutes);
-app.use('/users', usersRoutes);
+app.get('/products', productsController.getAll);
+app.post('/products', nameValidation, priceValidation, productsController.create);
+app.get('/orders', ordersControllers.getAll);
+app.post(
+  '/orders',
+  validateToken,
+  userIdValidation,
+  productIdsValidation,
+  ordersControllers.create,
+);
+app.post('/login', loginValidation.userDataSent, loginControllers.login);
+app.get('/users', usersController.getAll);
 
 export default app;
